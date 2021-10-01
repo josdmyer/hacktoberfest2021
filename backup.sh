@@ -24,25 +24,25 @@
  # Function to backup default source to default destination
  default()
  {
- 	/Users/"$USER"/Downloads/Software/rsync-3.1.1/rsync -a --info=progress2 "$default_src/" "$default_dest/"
+ 	rsync -a --info=progress2 "$default_src/" "$default_dest/"
  }
 
  # Function to backup specific source to default destination
  src()
  {
- 	/Users/"$USER"/Downloads/Software/rsync-3.1.1/rsync -a --info=progress2 "$2/" "$default_dest/"
+ 	rsync -a --info=progress2 "$2/" "$default_dest/"
  }
 
  # Function to backup default source to specific destination
  dest()
  {
- 	/Users/"$USER"/Downloads/Software/rsync-3.1.1/rsync -a --info=progress2 "$default_src/" "$2/"
+ 	rsync -a --info=progress2 "$default_src/" "$2/"
  }
 
  # Function to backup specific source to specific source
  src_dest()
  {
- 	/Users/"$USER"/Downloads/Software/rsync-3.1.1/rsync -a --info=progress2 "$1/" "$2/"
+ 	rsync -a --info=progress2 "$1/" "$2/"
  }
 
  # ------------------------------ Main ---------------------------------------
