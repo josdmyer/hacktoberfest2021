@@ -1,30 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
- # ----------------------------------------------------------------------------
- # Name:  		x
- # File Name:	bookmark.sh
- # Date:  	    Oct 1, 2021
- # Description:  A bash script to get a clean output of bookmarks with title 
- #				and url then clean up files once done
- # ---------------------------------------------------------------------------
+exec 3>&1 4>&2
+trap 'exec 2>&4 1>&3' 0 1 2 3
+exec 1>newbookmark.log 2>&1
 
- # Prompt for key return until then wait
- press()
- {
- 	read -p "Press [Enter] key to continue..."
- 	clear
- }
+set -o errexit
+set -o pipefail
+set -o nounset
+set -o xtrace
 
- # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Main ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- clear
+# Get a copy of bookmarks in xml format and save it on the Desktop
+plutil -convert xml1 -o ~/Desktop/SafariBookmarks.xml ~/Library/Safari/Bookmarks.plist
 
- mv /Users/x/Documents/Safari\ Bookmarks.html /Users/x/Documents/Keep/Misc/Safari/sf.html
+# Create new temp file that has the title and url only in plain format and store it in a file called temp on the Desktop
+grep -A1 -E '(>URLString<|>title<)' /Users/"$USER"/Desktop/SafariBookmarks.xml |grep -v -E '(>URLString|>title|^--)' | cut -d\> -f2 | cut -d\< -f1  >> /Users/"$USER"/Desktop/temp
 
- perl -0ne 'print "$2\n$1\n" while (/a href=\"(.*?)\">(.*?)<\/a>/igs)' "/Users/x/Documents/Keep/Misc/Safari/sf.html" >> "/Users/x/Documents/Keep/Misc/Safari/temp"
+mysql  < /Users/"$USER"/.Scripts/Bookmark-db/sql.sql
 
- press
+# Clean Up
+rm /Users/"$USER"/Desktop/SafariBookmarks.xml || true
+rm /Users/"$USER"/Desktop/temp || true
 
- rm /Users/x/Documents/Keep/Misc/Safari/temp
- rm /Users/x/Documents/Keep/Misc/Safari/sf.html
-
- # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ End of File ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+exit 0
